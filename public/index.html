@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>GuardiCam</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> 
+    <script src="script.js"></script>
 </head>
 <body>
-    <h1>Welcome to GuardiCam - Smart Home Monitoring System</h1>
-    <p>Real-time video feeds will appear here.</p>
+    <h1>GuardiCam - Live Camera Feed</h1>
+
+    <div class="camera-feed">
+        <h2>Camera 1</h2>
+        <img id="cam1" src="http://192.168.1.100/capture" alt="Camera 1 Feed" width="640" height="480">
+        <p>Description: <input type="text" id="cam1-description" placeholder="Enter camera description"></p>
+        <p>Last updated: <span id="cam1-time"></span></p>
+    </div>
+    
+    <div class="camera-feed">
+        <h2>Camera 2 Feed</h2>
+        <img id="cam2" src="http://192.168.1.100/capture" alt="Camera 2 Feed" width="640" height="480">
+        <p>Description: <input type="text" id="cam2-description" placeholder="Enter camera description"></p>
+        <p>Last updated: <span id="cam2-time"></span></p>
+    </div>
+
 </body>
 </html>
