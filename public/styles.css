@@ -1,4 +1,97 @@
+/* General layout for larger screens (default behavior) */
+.camera-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.camera-feed {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    width: 45%; /* Camera feed takes up half the screen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #c48a8a;
+}
+
+.camera-feed img {
+    width: 100%; /* Camera feed takes full width */
+    max-width: 600px; /* Limit the maximum width of the feed */
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
 #cam1-time, #cam2-time {
     font-weight: bold;
     color: blue;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.control-panel {
+    text-align: center;
+    margin: 20px;
+    padding: 15px;
+    background-color: #c28f8f;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.control-panel h3 {
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+/* Media query for smaller screens (phone view) */
+@media (max-width: 768px) {
+    .camera-container {
+        display: block; /* Stacks camera feeds vertically */
+        margin: 10px;
+    }
+
+    .camera-feed {
+        width: 100%; /* Each camera feed takes up the full width */
+        margin-bottom: 20px; /* Adds space between feeds */
+    }
+
+    button {
+        width: 100%; /* Buttons take full width on smaller screens */
+        margin: 10px 0;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        font-size: 1rem; /* Adjust font size for mobile */
+    }
+
+    .control-panel {
+        margin: 10px 0; /* Reduced margin for mobile */
+        padding: 10px;
+    }
+
+    .control-panel h3 {
+        font-size: 1.1rem; /* Slightly smaller title for mobile */
+    }
 }

@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
             descriptionInput.value = description; // Load the saved description
         }
     }
+    // Allow the camera feeds to be refreshed manually via the control panel buttons
+    function refreshFeed(cameraId) {
+        let img = document.querySelector(`#${cameraId}`);
+        img.src = img.src + '?' + new Date().getTime(); 
+    }
 
     // Function to save the description to localStorage
     function saveDescription(cameraId) {

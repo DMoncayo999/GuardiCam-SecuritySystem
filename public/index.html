@@ -11,18 +11,26 @@
 <body>
     <h1>GuardiCam - Live Camera Feed</h1>
 
-    <div class="camera-feed">
-        <h2>Camera 1</h2>
-        <img id="cam1" src="http://192.168.1.100/capture" alt="Camera 1 Feed" width="640" height="480">
-        <p>Description: <input type="text" id="cam1-description" placeholder="Enter camera description"></p>
-        <p>Last updated: <span id="cam1-time"></span></p>
+    <div class="camera-container">
+        <div class="camera-feed">
+            <h2>Camera 1</h2>
+            <img id="cam1" src="http://192.168.1.100/capture" alt="Camera 1 Feed" width="640" height="480">
+            <p>Description: <input type="text" id="cam1-description" placeholder="Enter camera description"></p>
+            <p>Last updated: <span id="cam1-time"></span></p>
+        </div>
+        
+        <div class="camera-feed">
+            <h2>Camera 2</h2>
+            <img id="cam2" src="http://192.168.1.100/capture" alt="Camera 2 Feed" width="640" height="480">
+            <p>Description: <input type="text" id="cam2-description" placeholder="Enter camera description"></p>
+            <p>Last updated: <span id="cam2-time"></span></p>
+        </div>
     </div>
     
-    <div class="camera-feed">
-        <h2>Camera 2 Feed</h2>
-        <img id="cam2" src="http://192.168.1.100/capture" alt="Camera 2 Feed" width="640" height="480">
-        <p>Description: <input type="text" id="cam2-description" placeholder="Enter camera description"></p>
-        <p>Last updated: <span id="cam2-time"></span></p>
+    <div class="control-panel">
+        <h3>Control Panel</h3>
+        <button onclick="refreshFeed('cam1')">Refresh Camera 1</button>
+        <button onclick="refreshFeed('cam2')">Refresh Camera 2</button>
     </div>
 
 </body>
