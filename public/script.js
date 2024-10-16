@@ -10,16 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
             descriptionInput.value = description; // Load the saved description
         }
     }
-    // Allow the camera feeds to be refreshed manually via the control panel buttons
+
+    // Function to refresh the camera feed by forcing the image to reload
     function refreshFeed(cameraId) {
-        let img = document.querySelector(`#${cameraId}`);
-        img.src = img.src + '?' + new Date().getTime(); 
+        console.log(`Refreshing ${cameraId}`);  // To verify the function is being called
+        let img = document.getElementById(cameraId);
+        img.src = img.src + '?' + new Date().getTime(); // Add timestamp to force reload
     }
 
     // Function to save the description to localStorage
     function saveDescription(cameraId) {
         const descriptionInput = document.getElementById(`${cameraId}-description`);
-        
+
         if (descriptionInput) {
             localStorage.setItem(`${cameraId}-description`, descriptionInput.value); // Save the new description
             console.log(`Saved description for ${cameraId}: ${descriptionInput.value}`); // Debug log
@@ -34,13 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update the timestamp
     function updateTime() {
         const currentTime = new Date();
-        
+
         // Update the time for Camera 1
         const cam1TimeSpan = document.getElementById('cam1-time');
         if (cam1TimeSpan) {
             cam1TimeSpan.textContent = `${formatTime(currentTime)}`;
         }
-        
+
         // Update the time for Camera 2
         const cam2TimeSpan = document.getElementById('cam2-time');
         if (cam2TimeSpan) {
@@ -65,5 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('cam2-description').addEventListener('input', () => {
         saveDescription('cam2');
+    });
+
+    // Event listeners for the refresh buttons
+    document.getElementById('refresh-cam1').addEventListener('click', () => {
+        refreshFeed('cam1');
+    });
+
+    document.getElementById('refresh-cam2').addEventListener('click', () => {
+        refreshFeed('cam2');
     });
 });

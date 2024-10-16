@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>GuardiCam</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> 
-    <script src="script.js"></script>
+    
 </head>
 <body>
     <h1>GuardiCam - Live Camera Feed</h1>
+
+    <!-- Camera 1 Capture -->
 
     <div class="camera-container">
         <div class="camera-feed">
@@ -19,6 +20,8 @@
             <p>Last updated: <span id="cam1-time"></span></p>
         </div>
         
+    <!-- Camera 2 Stream -->  
+
         <div class="camera-feed">
             <h2>Camera 2</h2>
             <img id="cam2" src="http://192.168.1.100/capture" alt="Camera 2 Feed" width="640" height="480">
@@ -29,9 +32,11 @@
     
     <div class="control-panel">
         <h3>Control Panel</h3>
-        <button onclick="refreshFeed('cam1')">Refresh Camera 1</button>
-        <button onclick="refreshFeed('cam2')">Refresh Camera 2</button>
+        <button id="refresh-cam1">Refresh Camera 1</button>
+        <button id="refresh-cam2">Refresh Camera 2</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> 
+    <script src="script.js"></script>
 </body>
 </html>
