@@ -26,6 +26,12 @@
     color: blue;
 }
 
+canvas {
+    border: 1px solid black; /* Optional: for visual reference */
+    display: block; /* Ensure it's displayed as a block */
+    margin: 10px auto; /* Centering if needed */
+}
+
 button {
     padding: 10px 15px;
     background-color: #617922;

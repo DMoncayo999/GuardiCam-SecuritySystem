@@ -86,10 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     reject('Security error or CORS issue');
                 }
             };
-
+    
             // Handle image load error
             img.onerror = function () {
-                reject('Image failed to load');
+                console.error(`Error loading image for ${cameraId}`); // Log to console
+                alert(`Failed to load the feed for ${cameraId}. Please refresh.`); // Alert the user
+                reject('Image failed to load'); // Reject the promise
             };
         });
     }
@@ -151,23 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Function to notify when motion is detected (browser notifications)
     function notifyMotion(message) {
         console.log(message); // Log to the console
-
-        // Browser notification (if allowed)
-        if (Notification.permission === 'granted') {
-            new Notification(message);
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    new Notification(message);
-                }
-            });
-        }
+    
+        // Show a simple alert on the screen
+        alert(message);
     }
     // Run the motion detection every 2 seconds
-    setInterval(detectMotion, 2000);
+    setInterval(detectMotion, 1000);
+
 
     // Load saved descriptions for both cameras on page load
     loadDescription('cam1');
