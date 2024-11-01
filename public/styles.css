@@ -1,4 +1,9 @@
 /* General layout for larger screens (default behavior) */
+h1 {
+    text-align: center; /* Center the main title */
+    color: #333; /* Title color */
+}
+
 .camera-container {
     display: flex;
     justify-content: space-around;
@@ -11,12 +16,12 @@
     border-radius: 8px;
     width: 45%; /* Camera feed takes up half the screen */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #8aa2c4;
+    background-color: #e2ad1c;
 }
 
 .camera-feed img {
     width: 100%; /* Camera feed takes full width */
-    max-width: 600px; /* Limit the maximum width of the feed */
+    max-width: 600px; 
     border-radius: 4px;
     margin-bottom: 10px;
 }
@@ -27,8 +32,8 @@
 }
 
 canvas {
-    border: 1px solid black; /* Optional: for visual reference */
-    display: block; /* Ensure it's displayed as a block */
+    border: 1px solid black; 
+    display: block; 
     margin: 10px auto; /* Centering if needed */
 }
 
@@ -40,10 +45,16 @@ button {
     border-radius: 4px;
     cursor: pointer;
     margin: 5px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #d1cf85;
+}
+
+button:focus {
+    outline: none; 
+    box-shadow: 0 0 5px rgba(97, 120, 34, 0.5); /* Add a shadow effect */
 }
 
 input[type="text"] {
@@ -59,9 +70,11 @@ input[type="text"] {
     text-align: center;
     margin: 20px;
     padding: 15px;
-    background-color: #8aa2c4;
+    background-color: #e2ad1c;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Center control panel */
+    max-width: 600px; /* Limit the width */
 }
 
 .control-panel h3 {
@@ -70,8 +83,85 @@ input[type="text"] {
     color: #333;
 }
 
+/* Style for the Saved Captures Section */
+#saved-captures {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove default padding */
+    margin: 20px 0; /* Add margin around the section */
+}
+
+#saved-captures li {
+    background-color: #f9f9f9; /* Light background for list items */
+    border: 1px solid #ddd; /* Add border to each list item */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding inside each list item */
+    margin-bottom: 10px; /* Space between list items */
+    transition: background-color 0.3s; /* Smooth background change on hover */
+}
+
+#saved-captures li:hover {
+    background-color: #eaeaea; /* Change background on hover */
+}
+
+#saved-captures a {
+    text-decoration: none; /* Remove underline from links */
+    color: #007bff; /* Link color */
+}
+
+#saved-captures a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+/*
+#notification-panel {
+    text-align: center; 
+    margin: 20px; 
+    padding: 10px; 
+    background-color: #dff0d8; 
+    color: #3c763d; 
+    border: 1px solid #d6e9c6; 
+    border-radius: 4px; 
+    display: none; 
+}
+*/
+#notification-panel {
+    display: block; /* Ensure it is displayed */
+    visibility: visible; /* Ensure it is visible */
+    background-color: rgba(0, 0, 0, 0.8); /* Set a background color */
+    color: white; /* Set text color */
+    padding: 10px; /* Add some padding */
+    border-radius: 5px; /* Optional: for rounded corners */
+    z-index: 1000; /* Ensure it is above other content */
+    position: relative; /* Adjust as needed */
+}
+
+
+footer {
+    background-color: #333; /* Dark background for footer */
+    color: white; /* Text color */
+    text-align: center; /* Center text */
+    padding: 15px; /* Padding around footer */
+    position: relative; /* Position relative for sticky behavior */
+    bottom: 0; /* Aligns to the bottom */
+    width: 100%; /* Full width */
+}
+
+footer a {
+    color: #d1cf85; /* Link color */
+    text-decoration: none; /* No underline */
+}
+
+footer a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+
+
 /* Media query for smaller screens (phone view) */
 @media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem; /* Adjust title size for mobile */
+    }
+
     .camera-container {
         display: block; /* Stacks camera feeds vertically */
         margin: 10px;
@@ -80,6 +170,11 @@ input[type="text"] {
     .camera-feed {
         width: 100%; /* Each camera feed takes up the full width */
         margin-bottom: 20px; /* Adds space between feeds */
+    }
+
+    .camera-feed img {
+        max-width: 100%; /* Ensure images are responsive */
+        height: auto; /* Maintain aspect ratio */
     }
 
     button {
