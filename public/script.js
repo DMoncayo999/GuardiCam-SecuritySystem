@@ -181,12 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
      // Fetch saved captures and display them
      async function loadSavedCaptures() {
         try {
+            console.log('Fetching saved captures...');
             const response = await fetch('/list-captures');
             if (!response.ok) {
                 throw new Error('Failed to load captures: ' + response.statusText);
             }
             const files = await response.json(); // Ensure this is valid JSON
-    
+            console.log('Files retrieved:', files); // Log the files retrieved
+
             const savedCapturesList = document.getElementById('saved-captures');
             savedCapturesList.innerHTML = ''; // Clear the list before adding new items
     

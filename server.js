@@ -62,12 +62,17 @@ app.get('/save-capture/:cameraId', async (req, res) => {
 
 // Route to list saved captures
 app.get('/list-captures', (req, res) => {
+    const captureDir = path.join(__dirname, 'captures');
+
     fs.readdir(capturesDir, (err, files) => {
         if (err) {
             console.error('Error reading captures directory:', err); // Log the error
             return res.status(500).json({ error: 'Error reading captures directory' });
         }
-        res.json(files); // Send the list of files as JSON
+
+        // Filter for .jpg files if necessary
+        const jpgFiles = files.filter(file => file.endsWith('.jpg'));
+        res.json(jpgFiles); // Send the array of file names as JSON
     });
 });
 
