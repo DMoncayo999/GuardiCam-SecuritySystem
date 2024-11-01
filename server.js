@@ -76,6 +76,33 @@ app.get('/list-captures', (req, res) => {
     });
 });
 
+// Clear captures route
+app.delete('/clear-captures', (req, res) => {
+    const captureFolderPath = capturesDir;
+    
+    // Use fs to delete all files in the capture folder
+    fs.readdir(captureFolderPath, (err, files) => {
+        if (err) {
+            return res.status(500).send('Unable to scan directory: ' + err);
+        }
+
+        // Delete each file in the directory
+        const deletePromises = files.map(file => {
+            return fs.promises.unlink(path.join(captureFolderPath, file));
+        });
+
+        Promise.all(deletePromises)
+            .then(() => {
+                console.log('All capture files deleted.');
+                res.status(200).send('All captures deleted successfully.');
+            })
+            .catch(err => {
+                console.error('Error deleting files:', err);
+                res.status(500).send('Error deleting capture files.');
+            });
+    });
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

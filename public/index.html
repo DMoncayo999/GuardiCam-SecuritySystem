@@ -10,6 +10,17 @@
 <body>
     <h1>GuardiCam - Live Camera Feed</h1>
 
+    <div class="layout-container">
+        <!-- Control Panel on the Left -->
+        <div class="control-panel">
+            <h3>Control Panel</h3>
+            <button id="refresh-cam1">Refresh Camera 1</button>
+            <button id="refresh-cam2">Refresh Camera 2</button>
+            <button id="toggle-saving">Stop Saving Captures</button>
+            <button id="clear-all-captures">Clear All Captures</button>
+        </div>
+
+
     <!-- Camera 1 Capture -->
 
     <div class="camera-container">
@@ -18,7 +29,7 @@
             <img id="cam1" src="http://192.168.1.100/capture" alt="Camera 1 Feed" width="640" height="480">
             <p>Description: <input type="text" id="cam1-description" placeholder="Enter camera description"></p>
             <p>Last updated: <span id="cam1-time"></span></p>
-            <h3>Hidden Canvas for Motion Detection </h3>
+            <h3>Canvas for Motion Detection </h3>
             <canvas id="canvas1" width="640" height="480"></canvas>
         </div>
         
@@ -29,24 +40,19 @@
             <img id="cam2" src="http://192.168.1.101/capture" alt="Camera 2 Feed" width="640" height="480">
             <p>Description: <input type="text" id="cam2-description" placeholder="Enter camera description"></p>
             <p>Last updated: <span id="cam2-time"></span></p>
-            <h3>Hidden Canvas for Motion Detection </h3>
+            <h3>Canvas for Motion Detection </h3>
             <canvas id="canvas2" width="640" height="480"></canvas>
         </div>
     </div>
+</div>
 
     <div id="notification-panel"></div>
-
-    <!-- Refresh camera feed -->
-    <div class="control-panel">
-        <h3>Control Panel</h3>
-        <button id="refresh-cam1">Refresh Camera 1</button>
-        <button id="refresh-cam2">Refresh Camera 2</button>
-    </div>
+   
 
     <!-- Section for saved captures -->
     <h2>Saved Captures</h2>
     <ul id="saved-captures"></ul>
-
+    
     <script src="script.js"></script>
 </body>
 

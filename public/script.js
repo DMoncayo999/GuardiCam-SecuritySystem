@@ -1,11 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let previousFrame1 = null; // Initialize previousFrame1
-    let previousFrame2 = null; // Initialize previousFrame2
+    let previousFrame1 = null; // Previous frame for Camera 1
+    let previousFrame2 = null; // Previous frame for Camera 2
 
-    let lastMotionTime = 0; // Tracks last motion time
-    const motionCooldown = 3000; // 3-second cooldown (adjustable)
+    let lastMotionTime = 0; // Last motion detection time
+    const motionCooldown = 3000; // Cooldown period of 3 seconds
 
-    
+     // Clear all captures functionality
+     document.getElementById('clear-all-captures').addEventListener('click', async () => {
+        const confirmDelete = confirm("Are you sure you want to delete all captures?");
+        if (confirmDelete) {
+            try {
+                const response = await fetch('/clear-captures', {
+                    method: 'DELETE' // Use DELETE method for deleting files
+                });
+
+                if (response.ok) {
+                    // Clear the saved captures display in the user interface
+                    document.getElementById('saved-captures').innerHTML = '';
+                    console.log('All captures deleted successfully.');
+                } else {
+                    console.error('Failed to clear captures:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error clearing captures:', error);
+            }
+        }
+    });
+
     // Function to load the saved description from localStorage
     function loadDescription(cameraId) {
         const description = localStorage.getItem(`${cameraId}-description`);
@@ -18,8 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to refresh the camera feed by forcing the image to reload
     function refreshFeed(cameraId) {
-        let img = document.getElementById(cameraId);
-        img.src = img.src + '?' + new Date().getTime(); // Add timestamp to force reload
+        const img = document.getElementById(cameraId);
+        img.src = `${img.src.split('?')[0]}?${new Date().getTime()}`; // Add timestamp to force reload
     }
 
     // Function to save the description to localStorage
@@ -77,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Handle image load error
             img.onerror = function () {
                 console.error(`Error loading image for ${cameraId}`); // Log to console
-                //alert(`Failed to load the feed for ${cameraId}. Please refresh.`); // Alert the user
                 reject('Image failed to load'); // Reject the promise
+                return null; // You can also return a specific value
             };
         });
     }
@@ -171,11 +192,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveMotionEvent(cameraId) {
         const timestamp = new Date().toLocaleString();
         const notificationPanel = document.getElementById('notification-panel');
+    
+        // Create a message element
         const message = document.createElement('p');
         message.textContent = `Motion detected on ${cameraId} at ${timestamp}`;
+    
+        // Clear existing messages to avoid overflow
+        notificationPanel.innerHTML = ''; // Optional: Clear old messages
         notificationPanel.appendChild(message);
-
-        setTimeout(() => message.remove(), 5000);
+    
+        // Show the notification panel
+        notificationPanel.style.display = 'block'; // Show the notification
+    
+        // Automatically hide after a delay
+        setTimeout(() => {
+            notificationPanel.style.display = 'none'; // Hide the notification after delay
+        }, 5000); // Adjust duration as needed
     }
 
      // Fetch saved captures and display them
@@ -207,13 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Call loadSavedCaptures when the page loads
-    document.addEventListener('DOMContentLoaded', loadSavedCaptures);
-    
-
-    // Call this function on page load
+    // Load saved captures on page load
     loadSavedCaptures();
-
     
     // Run the motion detection every 1 seconds
     setInterval(detectMotion, 1000);
