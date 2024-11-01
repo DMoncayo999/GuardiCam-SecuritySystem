@@ -2,14 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let previousFrame1 = null; // Initialize previousFrame1
     let previousFrame2 = null; // Initialize previousFrame2
 
+    let lastMotionTime = 0; // Tracks last motion time
+    const motionCooldown = 3000; // 3-second cooldown (adjustable)
 
+    
     // Function to load the saved description from localStorage
     function loadDescription(cameraId) {
         const description = localStorage.getItem(`${cameraId}-description`);
         const descriptionInput = document.getElementById(`${cameraId}-description`);
-
-        console.log(`Loading description for ${cameraId}: ${description}`); // Debug log
-
         if (description && descriptionInput) {
             descriptionInput.value = description; // Load the saved description
         }
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Function to refresh the camera feed by forcing the image to reload
     function refreshFeed(cameraId) {
-        console.log(`Refreshing ${cameraId}`);  // To verify the function is being called
         let img = document.getElementById(cameraId);
         img.src = img.src + '?' + new Date().getTime(); // Add timestamp to force reload
     }
@@ -26,12 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to save the description to localStorage
     function saveDescription(cameraId) {
         const descriptionInput = document.getElementById(`${cameraId}-description`);
-
         if (descriptionInput) {
             localStorage.setItem(`${cameraId}-description`, descriptionInput.value); // Save the new description
-            console.log(`Saved description for ${cameraId}: ${descriptionInput.value}`); // Debug log
         }
     }
+
 
     // Function to format time as HH:MM:SS
     function formatTime(date) {
@@ -41,25 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to update the timestamp
     function updateTime() {
         const currentTime = new Date();
-
-        // Update the time for Camera 1
         const cam1TimeSpan = document.getElementById('cam1-time');
-        if (cam1TimeSpan) {
-            cam1TimeSpan.textContent = `${formatTime(currentTime)}`;
-        }
-
-        // Update the time for Camera 2
         const cam2TimeSpan = document.getElementById('cam2-time');
-        if (cam2TimeSpan) {
-            cam2TimeSpan.textContent = `${formatTime(currentTime)}`;
-        }
+        if (cam1TimeSpan) cam1TimeSpan.textContent = formatTime(currentTime);
+        if (cam2TimeSpan) cam2TimeSpan.textContent = formatTime(currentTime);
     }
 
-    // Call updateTime() initially to show the current time on page load
     updateTime();
-
-    // Keep updating the timestamp every few seconds (e.g., every 3 seconds)
-    setInterval(updateTime, 3000);
+    setInterval(updateTime, 3000); // Update timestamp every 3 seconds
 
 
     // Function to refresh the camera feed and draw on canvas, returns a Promise with ImageData
@@ -90,11 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Handle image load error
             img.onerror = function () {
                 console.error(`Error loading image for ${cameraId}`); // Log to console
-                alert(`Failed to load the feed for ${cameraId}. Please refresh.`); // Alert the user
+                //alert(`Failed to load the feed for ${cameraId}. Please refresh.`); // Alert the user
                 reject('Image failed to load'); // Reject the promise
             };
         });
     }
+
 
     // Function to detect motion in camera feeds
     function detectMotion() {
@@ -102,20 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshImage('cam1', 'canvas1'),
             refreshImage('cam2', 'canvas2')
         ]).then(([currentFrame1, currentFrame2]) => {
-            // Ensure there is a previous frame to compare with
             if (previousFrame1 && previousFrame2) {
                 let motion1 = compareFrames(currentFrame1, previousFrame1, 'canvas1');
                 let motion2 = compareFrames(currentFrame2, previousFrame2, 'canvas2');
 
-                if (motion1) {
-                    notifyMotion('Motion detected on Camera 1');
-                }
-                if (motion2) {
-                    notifyMotion('Motion detected on Camera 2');
-                }
+                if (motion1) handleMotionDetected('Camera1');
+                if (motion2) handleMotionDetected('Camera2');
             }
 
-            // Update previous frames for the next comparison
             previousFrame1 = currentFrame1;
             previousFrame2 = currentFrame2;
         }).catch(error => {
@@ -123,15 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
     // Compare two frames pixel by pixel, highlight motion on the canvas
     function compareFrames(currentFrame, previousFrame, canvasId) {
         let motionThreshold = 50; // Sensitivity threshold
         let diffCount = 0;
         let canvas = document.getElementById(canvasId);
         let context = canvas.getContext('2d');
-
         context.beginPath(); // Start drawing highlights for motion
-
+        
         for (let i = 0; i < currentFrame.data.length; i += 4) {
             let rDiff = Math.abs(currentFrame.data[i] - previousFrame.data[i]);
             let gDiff = Math.abs(currentFrame.data[i + 1] - previousFrame.data[i + 1]);
@@ -148,20 +130,91 @@ document.addEventListener('DOMContentLoaded', () => {
 
         context.strokeStyle = 'red'; // Color for motion highlights
         context.stroke(); // Draw all motion areas
-
         return diffCount > 1000; // Motion detected if enough pixels have changed
     }
 
 
-    function notifyMotion(message) {
-        console.log(message); // Log to the console
-    
-        // Show a simple alert on the screen
-        alert(message);
-    }
-    // Run the motion detection every 2 seconds
-    setInterval(detectMotion, 1000);
+    // Manages cooldown for motion events
+    async function handleMotionDetected(cameraId) {
+        const currentTime = Date.now(); // Get current time
 
+        // Check if enough time has passed since the last motion detection
+        if (currentTime - lastMotionTime < motionCooldown) {
+        return; // Exit if still in cooldown period
+        }
+
+    // Update the last motion time
+    lastMotionTime = currentTime;
+
+        try {
+            // Notify about motion detection
+            saveMotionEvent(cameraId); // notify about motion
+    
+            // Send a request to save the capture
+            const response = await fetch(`/save-capture/${encodeURIComponent(cameraId)}`);
+            
+            // Check if the response is okay (status in the range 200-299)
+            if (!response.ok) {
+                throw new Error(`Failed to save capture: ${response.statusText}`);
+            }
+            
+            // Parse the response directly as JSON
+            const data = await response.json();
+        
+            console.log('Capture saved:', data.filePath);
+            } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // logs a timestamped notification in the designated notification-panel
+    function saveMotionEvent(cameraId) {
+        const timestamp = new Date().toLocaleString();
+        const notificationPanel = document.getElementById('notification-panel');
+        const message = document.createElement('p');
+        message.textContent = `Motion detected on ${cameraId} at ${timestamp}`;
+        notificationPanel.appendChild(message);
+
+        setTimeout(() => message.remove(), 5000);
+    }
+
+     // Fetch saved captures and display them
+     async function loadSavedCaptures() {
+        try {
+            const response = await fetch('/list-captures');
+            if (!response.ok) {
+                throw new Error('Failed to load captures: ' + response.statusText);
+            }
+            const files = await response.json(); // Ensure this is valid JSON
+    
+            const savedCapturesList = document.getElementById('saved-captures');
+            savedCapturesList.innerHTML = ''; // Clear the list before adding new items
+    
+            files.forEach(file => {
+                const listItem = document.createElement('li');
+                // Create a link to view the image
+                const link = document.createElement('a');
+                link.href = `/captures/${file}`; // URL to the image
+                link.textContent = file; // Set the filename as link text
+                link.target = '_blank'; // Open in a new tab
+                listItem.appendChild(link);
+                savedCapturesList.appendChild(listItem);
+            });
+        } catch (error) {
+            console.error('Error loading captures:', error);
+        }
+    }
+    
+    // Call loadSavedCaptures when the page loads
+    document.addEventListener('DOMContentLoaded', loadSavedCaptures);
+    
+
+    // Call this function on page load
+    loadSavedCaptures();
+
+    
+    // Run the motion detection every 1 seconds
+    setInterval(detectMotion, 1000);
 
     // Load saved descriptions for both cameras on page load
     loadDescription('cam1');
