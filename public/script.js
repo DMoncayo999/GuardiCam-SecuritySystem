@@ -5,27 +5,45 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastMotionTime = 0; // Last motion detection time
     const motionCooldown = 3000; // Cooldown period of 3 seconds
 
+     // Variable to track saving state
+     let isSavingEnabled = true;
+
+     // Toggle saving functionality
+     document.getElementById('toggle-saving').addEventListener('click', () => {
+         isSavingEnabled = !isSavingEnabled;
+         const buttonText = isSavingEnabled ? 'Stop Saving Captures' : 'Start Saving Captures';
+         document.getElementById('toggle-saving').textContent = buttonText;
+         
+         // Logic to start/stop saving captures based on isSavingEnabled
+         if (isSavingEnabled) {
+             console.log("Capture saving resumed.");
+             // Additional code if needed to resume saving captures
+         } else {
+             console.log("Capture saving stopped.");
+             // Additional code if needed to stop saving captures
+         }
+     });
+ 
      // Clear all captures functionality
      document.getElementById('clear-all-captures').addEventListener('click', async () => {
-        const confirmDelete = confirm("Are you sure you want to delete all captures?");
-        if (confirmDelete) {
-            try {
-                const response = await fetch('/clear-captures', {
-                    method: 'DELETE' // Use DELETE method for deleting files
-                });
-
-                if (response.ok) {
-                    // Clear the saved captures display in the user interface
-                    document.getElementById('saved-captures').innerHTML = '';
-                    console.log('All captures deleted successfully.');
-                } else {
-                    console.error('Failed to clear captures:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error clearing captures:', error);
-            }
-        }
-    });
+         const confirmDelete = confirm("Are you sure you want to delete all captures?");
+         if (confirmDelete) {
+             try {
+                 const response = await fetch('/clear-captures', {
+                     method: 'DELETE'
+                 });
+                 if (response.ok) {
+                     document.getElementById('saved-captures').innerHTML = ''; // Clear UI display
+                     console.log('All captures deleted successfully.');
+                 } else {
+                     console.error('Failed to clear captures:', response.statusText);
+                 }
+             } catch (error) {
+                 console.error('Error clearing captures:', error);
+             }
+         }
+     });
+ 
 
     // Function to load the saved description from localStorage
     function loadDescription(cameraId) {

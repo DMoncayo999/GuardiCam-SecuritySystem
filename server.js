@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
 const saveCapture = async (cameraId, url) => {
     try {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
+        
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const filename = path.join(capturesDir, `${cameraId}-${timestamp}.jpg`);
         fs.writeFileSync(filename, response.data);
