@@ -29,10 +29,17 @@ const saveCapture = async (cameraId, url) => {
     try {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
         
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        // Create a timestamp in the format YYYY-MM-DD_HH-MM-SS (remove milliseconds and UTC 'Z')
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
+        
+        // Generate the filename using the timestamp and cameraId
         const filename = path.join(capturesDir, `${cameraId}-${timestamp}.jpg`);
+        
+        // Write the capture to the file
         fs.writeFileSync(filename, response.data);
         console.log(`Saved capture: ${filename}`);
+        
         return filename; // Return the saved filename
     } catch (error) {
         console.error(`Error saving capture from ${cameraId}:`, error);
