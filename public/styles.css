@@ -162,6 +162,32 @@ footer a:hover {
 }
 
 
+/* Default styling for the button */
+#toggle-saving {
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+/* Red when saving is enabled */
+.active {
+    background-color: red;
+    color: white;
+}
+
+/* Blue when saving is disabled */
+.inactive {
+    background-color: blue;
+    color: white;
+}
+
+
+
+
 
 /* Media query for smaller screens (phone view) */
 @media (max-width: 768px) {

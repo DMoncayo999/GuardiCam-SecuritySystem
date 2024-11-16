@@ -13,11 +13,18 @@ if (!fs.existsSync(capturesDir)) {
     fs.mkdirSync(capturesDir, { recursive: true });
 }
 
+// Global flag to manage the capture saving state
+let captureSavingEnabled = false;
+
+// Middleware to parse JSON requests
+app.use(express.json());
+
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve images from the 'captures' directory
 app.use('/captures', express.static(capturesDir));
+
 
 // Home route
 app.get('/', (req, res) => {
@@ -49,24 +56,29 @@ const saveCapture = async (cameraId, url) => {
 
 // Route to save capture on motion detection
 app.get('/save-capture/:cameraId', async (req, res) => {
-  const cameraId = req.params.cameraId;
-  const cameraUrls = {
-    "Camera1": 'http://192.168.1.100/capture',
-    "Camera2": 'http://192.168.1.101/capture'
-  };
-  const url = cameraUrls[cameraId];
+    if (!captureSavingEnabled) {
+        return res.status(200).json({ message: 'Capture saving is disabled.' });
+    }
 
-  if (url) {
-      const savedFile = await saveCapture(cameraId, url);
-      if (savedFile) {
-          res.status(200).json({ filePath: savedFile }); // Send JSON response
-      } else {
-          res.status(500).json({ error: 'Error saving capture' });
-      }
-  } else {
-      res.status(404).json({ error: 'Camera not found' });
-  }
+    const cameraId = req.params.cameraId;
+    const cameraUrls = {
+        "Camera1": 'http://192.168.1.100/capture',
+        "Camera2": 'http://192.168.1.101/capture'
+    };
+    const url = cameraUrls[cameraId];
+
+    if (url) {
+        const savedFile = await saveCapture(cameraId, url);
+        if (savedFile) {
+            res.status(200).json({ filePath: savedFile }); // Send JSON response
+        } else {
+            res.status(500).json({ error: 'Error saving capture' });
+        }
+    } else {
+        res.status(404).json({ error: 'Camera not found' });
+    }
 });
+
 
 // Route to list saved captures
 app.get('/list-captures', (req, res) => {
@@ -83,6 +95,7 @@ app.get('/list-captures', (req, res) => {
         res.json(jpgFiles); // Send the array of file names as JSON
     });
 });
+
 
 // Clear captures route
 app.delete('/clear-captures', (req, res) => {
@@ -109,6 +122,14 @@ app.delete('/clear-captures', (req, res) => {
                 res.status(500).send('Error deleting capture files.');
             });
     });
+});
+
+
+// Route to toggle capture saving
+app.post('/toggle-capture-saving', (req, res) => {
+    captureSavingEnabled = !captureSavingEnabled;  // Toggle the state
+    console.log(`Capture saving ${captureSavingEnabled ? 'enabled' : 'disabled'}`);
+    res.json({ captureSavingEnabled });  // Return the updated state
 });
 
 // Start the server
