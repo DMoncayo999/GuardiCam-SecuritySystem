@@ -153,27 +153,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggleButton.addEventListener('click', async () => {
         try {
+            // Toggle state on the server
             const response = await fetch('/toggle-capture-saving', { method: 'POST' });
-
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            // Get updated state from server
             const data = await response.json();
-            const isEnabled = data.captureSavingEnabled; // True: Enabled, False: Disabled
+            isSavingEnabled = data.captureSavingEnabled; // Update local state
 
-            // Update button text
-            toggleButton.textContent = isEnabled ? 'Stop Saving Captures' : 'Start Saving Captures';
+            // Update button text and styles
+            if (isSavingEnabled) {
+                toggleButton.textContent = 'Saving Captures'; // Default state
+                toggleButton.classList.add('active');
+                toggleButton.classList.remove('inactive');
+            } else {
+                toggleButton.textContent = 'Stop Saving Captures'; // Stopped state
+                toggleButton.classList.add('inactive');
+                toggleButton.classList.remove('active');
+            }
 
-            // Update button styles
-            toggleButton.classList.toggle('active', isEnabled);  // Red when enabled
-            toggleButton.classList.toggle('inactive', !isEnabled); // Blue when disabled
-
-            console.log(`Capture saving ${isEnabled ? 'enabled' : 'disabled'}`);
+            console.log(`Capture saving ${isSavingEnabled ? 'enabled' : 'disabled'}`);
         } catch (error) {
-            console.error("Error during fetch:", error);
+            console.error("Error toggling capture saving state:", error);
         }
     });
+
 
     // Clear all saved captures
     document.getElementById('clear-all-captures').addEventListener('click', async () => {

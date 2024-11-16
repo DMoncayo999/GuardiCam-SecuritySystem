@@ -14,7 +14,7 @@ if (!fs.existsSync(capturesDir)) {
 }
 
 // Global flag to manage the capture saving state
-let captureSavingEnabled = false;
+let captureSavingEnabled = true; // Default state: Enabled
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -127,10 +127,16 @@ app.delete('/clear-captures', (req, res) => {
 
 // Route to toggle capture saving
 app.post('/toggle-capture-saving', (req, res) => {
-    captureSavingEnabled = !captureSavingEnabled;  // Toggle the state
+    captureSavingEnabled = !captureSavingEnabled; // Toggle the state
     console.log(`Capture saving ${captureSavingEnabled ? 'enabled' : 'disabled'}`);
-    res.json({ captureSavingEnabled });  // Return the updated state
+    res.json({ captureSavingEnabled }); // Return the updated state
 });
+
+// Route to get the current capture saving state
+app.get('/get-capture-saving-state', (req, res) => {
+    res.status(200).json({ captureSavingEnabled });
+});
+
 
 // Start the server
 app.listen(port, () => {

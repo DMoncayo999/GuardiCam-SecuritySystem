@@ -173,17 +173,16 @@ footer a:hover {
     transition: background-color 0.3s ease;
 }
 
-/* Red when saving is enabled */
-.active {
-    background-color: red;
-    color: white;
+/* Blue for saving enabled (default state) */
+#toggle-saving.active {
+    background-color: blue;
 }
 
-/* Blue when saving is disabled */
-.inactive {
-    background-color: blue;
-    color: white;
+/* Red for saving disabled (STOP state) */
+#toggle-saving.inactive {
+    background-color: red;
 }
+
 
 
 
