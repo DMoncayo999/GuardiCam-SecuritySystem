@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
     // Log a timestamped notification in the notification panel
     function saveMotionEvent(cameraId) {
         const timestamp = new Date().toLocaleString();
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
     // Compare frames for motion detection
     function compareFrames(currentFrame, previousFrame, canvasId) {
         const motionThreshold = 50; // Sensitivity threshold
@@ -110,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return diffCount > 1000;
     }
 
+
     // Handle motion detection
     async function handleMotionDetected(cameraId) {
         const currentTime = Date.now();
@@ -129,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveMotionEvent(cameraId);
     }
 
+
     // Detect motion in camera feeds
     function detectMotion() {
         Promise.all([
@@ -144,13 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(error => console.error('Error detecting motion:', error));
     }
 
+
     /******************************
      * UI and Event Listeners
      ******************************/
 
     // Toggle capture saving functionality
     const toggleButton = document.getElementById("toggle-saving");
-
     toggleButton.addEventListener('click', async () => {
         try {
             // Toggle state on the server
@@ -225,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
     /******************************
      * Initialization
      ******************************/
@@ -238,4 +243,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 3000);
     setInterval(detectMotion, 1000);
+    setInterval(loadSavedCaptures, 5000);
 });
