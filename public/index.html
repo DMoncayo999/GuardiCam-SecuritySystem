@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>GuardiCam</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <script src="objectdetection.js" defer></script>
     
 </head>
 <body>
-    <h1>GuardiCam - Live Camera Feed</h1>
+    <h1>GuardiCam - Security System</h1>
 
     <div class="layout-container">
         <!-- Control Panel on the Left -->
@@ -17,6 +20,7 @@
             <button id="refresh-cam1">Refresh Camera 1</button>
             <button id="refresh-cam2">Refresh Camera 2</button>
             <button id="toggle-saving" class="active">Saving Captures</button>
+            <button id="toggle-detection">Enable Object Detection</button>
             <button id="clear-all-captures">Clear All Captures</button>
         </div>
 
@@ -25,7 +29,7 @@
 
     <div class="camera-container">
         <div class="camera-feed">
-            <h2>Camera 1</h2>
+            <h2>Camera 1 Feed</h2>
             <img id="cam1" src="http://192.168.1.100/capture" alt="Camera 1 Feed" width="640" height="480">
             <p>Description: <input type="text" id="cam1-description" placeholder="Enter camera description"></p>
             <p>Last updated: <span id="cam1-time"></span></p>
@@ -36,7 +40,7 @@
     <!-- Camera 2 Stream -->  
 
         <div class="camera-feed">
-            <h2>Camera 2</h2>
+            <h2>Camera 2 Feed</h2>
             <img id="cam2" src="http://192.168.1.101/capture" alt="Camera 2 Feed" width="640" height="480">
             <p>Description: <input type="text" id="cam2-description" placeholder="Enter camera description"></p>
             <p>Last updated: <span id="cam2-time"></span></p>
