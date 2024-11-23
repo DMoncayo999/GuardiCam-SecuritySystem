@@ -121,10 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isSavingEnabled) {
             try {
-                console.log(`Motion detected on ${cameraId}`);
                 const response = await fetch(`/save-capture/${encodeURIComponent(cameraId)}`);
                 if (!response.ok) throw new Error(`Failed to save capture: ${response.statusText}`);
-                console.log('Capture saved:', await response.json());
             } catch (error) {
                 console.error('Error saving capture:', error);
             }
@@ -157,28 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleButton = document.getElementById("toggle-saving");
     toggleButton.addEventListener('click', async () => {
         try {
-            // Toggle state on the server
             const response = await fetch('/toggle-capture-saving', { method: 'POST' });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            // Get updated state from server
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            isSavingEnabled = data.captureSavingEnabled; // Update local state
+            isSavingEnabled = data.captureSavingEnabled;
 
-            // Update button text and styles
-            if (isSavingEnabled) {
-                toggleButton.textContent = 'Saving Captures'; // Default state
-                toggleButton.classList.add('active');
-                toggleButton.classList.remove('inactive');
-            } else {
-                toggleButton.textContent = 'Stop Saving Captures'; // Stopped state
-                toggleButton.classList.add('inactive');
-                toggleButton.classList.remove('active');
-            }
-
-            console.log(`Capture saving ${isSavingEnabled ? 'enabled' : 'disabled'}`);
+            toggleButton.textContent = isSavingEnabled ? 'Saving Captures' : 'Stop Saving Captures';
+            toggleButton.classList.toggle('active', isSavingEnabled);
+            toggleButton.classList.toggle('inactive', !isSavingEnabled);
         } catch (error) {
             console.error("Error toggling capture saving state:", error);
         }
@@ -192,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('/clear-captures', { method: 'DELETE' });
                 if (!response.ok) throw new Error(response.statusText);
                 document.getElementById('saved-captures').innerHTML = '';
-                console.log('All captures deleted successfully.');
             } catch (error) {
                 console.error('Error clearing captures:', error);
             }
