@@ -1,7 +1,7 @@
 let isDetectionEnabled = true; // Enable detection by default
 let detectionModel = null;
 let canvasInitialized1 = false; // Track whether canvas size for Camera 1 has been set
-let canvasInitialized2 = false; // Track whether canvas size for Camera 2 has been set;
+let canvasInitialized2 = false; // Track whether canvas size for Camera 2 has been set
 let detectionActive = false; // Control for detection loop
 let lastLogTime = 0; // For logging frequency control
 
@@ -49,15 +49,10 @@ async function runObjectDetection(canvasId, imageId, canvasInitializedFlag) {
         canvasInitializedFlag = resizeCanvasToFitScreen(canvas, image, canvasInitializedFlag);
     }
 
-    console.log(`Running object detection on canvas ${canvasId}`);
-    console.log(`Canvas ${canvasId} size: ${canvas.width}x${canvas.height}`);
-    console.log(`Image ${imageId} size: ${image.width}x${image.height}`);
-
     // Clear the canvas and redraw the image
     context.clearRect(0, 0, canvas.width, canvas.height);
     try {
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        console.log(`Image drawn onto canvas ${canvasId}`);
     } catch (drawError) {
         console.error(`Error drawing image ${imageId} onto canvas ${canvasId}:`, drawError);
         return;
@@ -70,7 +65,6 @@ async function runObjectDetection(canvasId, imageId, canvasInitializedFlag) {
 
     try {
         const predictions = await detectionModel.detect(image);
-        console.log(`Predictions for canvas ${canvasId}:`, predictions);
 
         // Draw predictions if any are detected
         if (predictions.length > 0) {
@@ -84,12 +78,6 @@ async function runObjectDetection(canvasId, imageId, canvasInitializedFlag) {
                 context.font = "16px Arial";
                 context.fillText(prediction.class, x, y > 10 ? y - 5 : y + 15);
             });
-        } else {
-            const now = Date.now();
-            if (now - lastLogTime > 5000) { // Log every 5 seconds
-                console.log(`No objects detected on ${canvasId}.`);
-                lastLogTime = now;
-            }
         }
     } catch (error) {
         console.error("Error during object detection:", error);
