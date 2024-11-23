@@ -1,4 +1,8 @@
 /* General layout for larger screens (default behavior) */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
 h1 {
     text-align: center; /* Center the main title */
     color: #333; /* Title color */
@@ -182,8 +186,6 @@ footer a:hover {
 #toggle-saving.inactive {
     background-color: red;
 }
-
-
 
 
 

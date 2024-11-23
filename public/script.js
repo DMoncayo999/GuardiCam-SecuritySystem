@@ -243,5 +243,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 3000);
     setInterval(detectMotion, 1000);
-    setInterval(loadSavedCaptures, 5000);
+    setInterval(loadSavedCaptures, 3000);
 });

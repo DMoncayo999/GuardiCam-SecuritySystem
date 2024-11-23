@@ -1,5 +1,9 @@
-let isDetectionEnabled = true;// Enable detection by default
+let isDetectionEnabled = true; // Enable detection by default
 let detectionModel = null;
+let canvasInitialized1 = false; // Track whether canvas size for Camera 1 has been set
+let canvasInitialized2 = false; // Track whether canvas size for Camera 2 has been set;
+let detectionActive = false; // Control for detection loop
+let lastLogTime = 0; // For logging frequency control
 
 // Load the COCO-SSD model
 async function loadModel() {
@@ -11,9 +15,21 @@ async function loadModel() {
     }
 }
 
+// Dynamically resize the canvas to fit the image's aspect ratio and parent container
+function resizeCanvasToFitScreen(canvas, image, canvasInitializedFlag) {
+    if (canvasInitializedFlag) return true; // Only resize once
+    const parent = canvas.parentElement;
+    const aspectRatio = image.width / image.height;
+
+    if (parent) {
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetWidth / aspectRatio;
+    }
+    return true; // Set the flag to true after resizing
+}
 
 // Perform object detection on the given canvas
-async function runObjectDetection(canvasId, imageId) {
+async function runObjectDetection(canvasId, imageId, canvasInitializedFlag) {
     const canvas = document.getElementById(canvasId);
     const image = document.getElementById(imageId);
 
@@ -28,66 +44,93 @@ async function runObjectDetection(canvasId, imageId) {
         return;
     }
 
-    // Set canvas size only if it's not already set
-    if (canvas.width === 0 || canvas.height === 0) {
-        canvas.width = image.width;
-        canvas.height = image.height;
+    // Dynamically adjust the canvas size to match the image
+    if (!canvasInitializedFlag) {
+        canvasInitializedFlag = resizeCanvasToFitScreen(canvas, image, canvasInitializedFlag);
     }
+
+    console.log(`Running object detection on canvas ${canvasId}`);
+    console.log(`Canvas ${canvasId} size: ${canvas.width}x${canvas.height}`);
+    console.log(`Image ${imageId} size: ${image.width}x${image.height}`);
 
     // Clear the canvas and redraw the image
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(image, 0, 0);
+    try {
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        console.log(`Image drawn onto canvas ${canvasId}`);
+    } catch (drawError) {
+        console.error(`Error drawing image ${imageId} onto canvas ${canvasId}:`, drawError);
+        return;
+    }
 
-    if (!detectionModel) return;
+    if (!detectionModel) {
+        console.error("Detection model not loaded.");
+        return;
+    }
 
     try {
         const predictions = await detectionModel.detect(image);
-        // Draw bounding boxes and labels
-        predictions.forEach(prediction => {
-            const [x, y, width, height] = prediction.bbox;
-            context.strokeStyle = "#00FF00"; // Green rectangles
-            context.lineWidth = 2;
-            context.strokeRect(x, y, width, height);
+        console.log(`Predictions for canvas ${canvasId}:`, predictions);
 
-            context.fillStyle = "#00FF00";
-            context.font = "16px Arial";
-            context.fillText(prediction.class, x, y > 10 ? y - 5 : y + 15);
-        });
+        // Draw predictions if any are detected
+        if (predictions.length > 0) {
+            predictions.forEach(prediction => {
+                const [x, y, width, height] = prediction.bbox;
+                context.strokeStyle = "#00FF00"; // Green rectangles
+                context.lineWidth = 2;
+                context.strokeRect(x, y, width, height);
+
+                context.fillStyle = "#00FF00";
+                context.font = "16px Arial";
+                context.fillText(prediction.class, x, y > 10 ? y - 5 : y + 15);
+            });
+        } else {
+            const now = Date.now();
+            if (now - lastLogTime > 5000) { // Log every 5 seconds
+                console.log(`No objects detected on ${canvasId}.`);
+                lastLogTime = now;
+            }
+        }
     } catch (error) {
         console.error("Error during object detection:", error);
     }
 }
 
+// Start the continuous detection loop
+function startDetection() {
+    if (detectionActive) return; // Avoid starting multiple loops
+    detectionActive = true;
+
+    const detectionLoop = async () => {
+        if (!detectionActive || !isDetectionEnabled) return; // Exit loop if disabled
+        await runObjectDetection('objectDetectionCanvas1', 'cam1', canvasInitialized1); // Camera 1
+        await runObjectDetection('objectDetectionCanvas2', 'cam2', canvasInitialized2); // Camera 2
+        requestAnimationFrame(detectionLoop);
+    };
+
+    detectionLoop();
+}
+
+// Stop the detection loop
+function stopDetection() {
+    detectionActive = false; // Stop the detection loop
+}
 
 // Setup detection for multiple canvases and the toggle button
 function setupDetection() {
-    // Toggle button functionality
-    document.getElementById("toggle-detection").addEventListener("click", () => {
+    const toggleButton = document.getElementById("toggle-detection");
+    toggleButton.addEventListener("click", () => {
         isDetectionEnabled = !isDetectionEnabled;
-
-        const button = document.getElementById("toggle-detection");
-        button.textContent = isDetectionEnabled ? "Disable Object Detection" : "Enable Object Detection";
-
+        toggleButton.textContent = isDetectionEnabled ? "Disable Object Detection" : "Enable Object Detection";
         console.log(`Object detection ${isDetectionEnabled ? "enabled" : "disabled"}`);
+        if (isDetectionEnabled) {
+            startDetection();
+        } else {
+            stopDetection();
+        }
     });
 
-    // Start the continuous detection loop
-    setInterval(() => {
-        if (isDetectionEnabled) {
-            runObjectDetection('canvas1', 'cam1'); // Camera 1
-            runObjectDetection('canvas2', 'cam2'); // Camera 2
-        }
-    }, 1000); // Runs every second
-}
-
-// Continuous detection (can be used or removed based on your design preference)
-function continuousDetection() {
-    setInterval(() => {
-        if (isDetectionEnabled) {
-            runObjectDetection('canvas1', 'cam1'); // Camera 1
-            runObjectDetection('canvas2', 'cam2'); // Camera 2
-        }
-    }, 1000); // Runs every second
+    startDetection(); // Start detection when the page loads
 }
 
 // Initialize everything when the page loads
