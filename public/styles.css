@@ -138,6 +138,7 @@ input[type="text"] {
     text-decoration: underline; /* Underline on hover */
 }
 
+
 #notification-panel {
     display: none; /* Initially hidden */
     visibility: visible; /* Ensure it can be made visible */
@@ -152,6 +153,7 @@ input[type="text"] {
     transition: all 0.3s ease;
     max-width: 300px; 
 }
+
 
 footer {
     background-color: #333;
@@ -184,6 +186,7 @@ main {
 }
 
 
+
 /* Default styling for the button */
 #toggle-saving {
     font-size: 16px;
@@ -204,6 +207,64 @@ main {
 #toggle-saving.inactive {
     background-color: red;
 }
+
+
+
+/* Modal container */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal buttons */
+.modal-btn {
+    margin: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-btn.confirm {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.modal-btn.confirm:hover {
+    background-color: #d43a3a;
+}
+
+.modal-btn.cancel {
+    background-color: #cccccc;
+    color: black;
+}
+
+.modal-btn.cancel:hover {
+    background-color: #999999;
+}
+
+
+
+
 
 
 

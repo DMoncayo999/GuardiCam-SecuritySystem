@@ -151,6 +151,21 @@ document.addEventListener('DOMContentLoaded', () => {
      * UI and Event Listeners
      ******************************/
 
+    // Modal Elements and Functions
+    const modal = document.getElementById("confirmation-modal");
+    const confirmButton = document.getElementById("confirm-delete");
+    const cancelButton = document.getElementById("cancel-delete");
+
+    // Function to open the modal
+    function openModal() {
+        modal.style.display = "flex"; // Show the modal
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none"; // Hide the modal
+    }
+
     // Toggle capture saving functionality
     const toggleButton = document.getElementById("toggle-saving");
     toggleButton.addEventListener('click', async () => {
@@ -168,19 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
     // Clear all saved captures
-    document.getElementById('clear-all-captures').addEventListener('click', async () => {
-        if (confirm("Are you sure you want to delete all captures?")) {
-            try {
-                const response = await fetch('/clear-captures', { method: 'DELETE' });
-                if (!response.ok) throw new Error(response.statusText);
-                document.getElementById('saved-captures').innerHTML = '';
-            } catch (error) {
-                console.error('Error clearing captures:', error);
-            }
+    document.getElementById('clear-all-captures').addEventListener('click', () => {
+        openModal(); // Open the modal instead of using `confirm`
+    });
+
+    // Confirm delete action
+    confirmButton.addEventListener("click", async () => {
+        try {
+            const response = await fetch('/clear-captures', { method: 'DELETE' });
+            if (!response.ok) throw new Error(response.statusText);
+            document.getElementById('saved-captures').innerHTML = '';
+            closeModal(); // Close the modal after successful deletion
+        } catch (error) {
+            console.error('Error clearing captures:', error);
         }
     });
+
+    // Cancel delete action
+    cancelButton.addEventListener("click", closeModal);
 
     // Event listeners for refresh buttons
     document.getElementById('refresh-cam1').addEventListener('click', () => refreshFeed('cam1'));
@@ -211,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading captures:', error);
         }
     }
-
 
     /******************************
      * Initialization
