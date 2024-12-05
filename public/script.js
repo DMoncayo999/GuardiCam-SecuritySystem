@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /******************************
-     * Camera and Motion Detection
+     * Motion Detection Functions
      ******************************/
 
     // Refresh camera feed and return ImageData
@@ -233,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    
     /******************************
      * Initialization
      ******************************/

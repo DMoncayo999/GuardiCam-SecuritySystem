@@ -1,10 +1,18 @@
+/******************************
+ * Global Variables 
+ ******************************/
 let isDetectionEnabled = true; // Enable detection by default
-let detectionModel = null;
+let detectionModel = null; // Reference to the COCO-SSD model once it’s loaded.
 let canvasInitialized1 = false; // Track if canvas size for Camera 1 has been set
 let canvasInitialized2 = false; // Track if canvas size for Camera 2 has been set
 let detectionActive = false; // Control for detection loop
 let detectionInterval = 800; // Detection interval in milliseconds
 let lastDetections = {}; // Store the last detection results for each camera
+
+
+/******************************
+ * Utility Functions
+ ******************************/
 
 // Load the COCO-SSD model
 async function loadModel() {
@@ -127,6 +135,10 @@ function setupDetection() {
 
     startDetectionLoop(); // Start detection when the page loads
 }
+
+/******************************
+ * Initialization
+ ******************************/
 
 // Initialize everything when the page loads
 window.onload = async () => {
