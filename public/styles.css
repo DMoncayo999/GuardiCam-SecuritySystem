@@ -3,7 +3,28 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-h1, h2, h3 {
+/* Styling for the Header */
+h1 {
+    text-align: center;
+    color: #f1f1f1; /* Lighter color for contrast */
+    background-color: #333; /* Dark background like footer */
+    padding: 20px;
+    font-size: 2rem; /* Larger font size for emphasis */
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 20px; /* Space below the header */
+}
+
+/* Additional header-specific styling */
+h1 span {
+    color: #e2ad1c; /* Accent color for part of the title */
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+h2, h3 {
     text-align: center; /* Center the main title */
     color: #333; /* Title color */
 }
@@ -267,13 +288,13 @@ main {
 
 
 
-
-
 /* Media query for smaller screens (phone view) */
 @media (max-width: 768px) {
-    h1, h2, h3 {
-        font-size: 1.5rem; /* Adjust title size for mobile */
+    
+    h1 {
+        font-size: 1.5rem; /* Adjust font size for smaller screens */
     }
+
 
     h2, h3 {
         font-size: 1.0rem; /* Adjust title size for mobile */
